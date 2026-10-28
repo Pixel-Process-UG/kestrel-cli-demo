@@ -1,5 +1,5 @@
 // Renders the page after a short delay, like a client-side app would.
-// The workflow passes --wait-for "#app main" so captures never show the empty shell.
+// The workflow passes --wait-for main so captures never show the empty shell.
 const pages = {
     home: `
         <section class="hero wrap">

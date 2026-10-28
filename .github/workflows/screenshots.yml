@@ -31,7 +31,7 @@ jobs:
         uses: Pixel-Process-UG/kestrel-cli@v0.1.0
         with:
           urls: http://localhost:8000/ http://localhost:8000/pricing.html
-          args: --viewport 390x844 --viewport 1440x900 --full-page --wait-for "#app main" --hide .cookie-banner
+          args: --viewport 390x844 --viewport 1440x900 --full-page --wait-for main --hide .cookie-banner
           out: screenshots/light
 
       - name: Dark mode
@@ -39,7 +39,7 @@ jobs:
         uses: Pixel-Process-UG/kestrel-cli@v0.1.0
         with:
           urls: http://localhost:8000/
-          args: --dark --wait-for "#app main" --hide .cookie-banner
+          args: --dark --wait-for main --hide .cookie-banner
           out: screenshots/dark
 
       - name: One element at 2x
@@ -47,7 +47,7 @@ jobs:
         uses: Pixel-Process-UG/kestrel-cli@v0.1.0
         with:
           urls: http://localhost:8000/pricing.html
-          args: --selector ".card.pick" --scale 2 --wait-for "#app main" --hide .cookie-banner
+          args: --selector ".card.pick" --scale 2 --wait-for main --hide .cookie-banner
           out: screenshots/element
 
       - name: Summary

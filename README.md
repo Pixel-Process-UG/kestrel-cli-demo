@@ -12,7 +12,7 @@ To try it on your own site, fork this repo and change the URLs, or open the late
 - uses: Pixel-Process-UG/kestrel-cli@v0.1.0
   with:
     urls: http://localhost:8000/ http://localhost:8000/pricing.html
-    args: --viewport 390x844 --viewport 1440x900 --full-page --wait-for "#app main" --hide .cookie-banner
+    args: --viewport 390x844 --viewport 1440x900 --full-page --wait-for main --hide .cookie-banner
     out: screenshots/light
 ```
 
@@ -45,7 +45,7 @@ The page renders its content with JavaScript after a delay, so `--wait-for` hold
 curl -fsSL https://github.com/Pixel-Process-UG/kestrel-cli/releases/latest/download/kestrel-linux-x64 -o kestrel  # or kestrel-macos, kestrel-windows-x64.exe
 chmod +x kestrel
 python3 -m http.server 8000 -d site &
-./kestrel shot http://localhost:8000/ --viewport 390x844 --full-page --wait-for "#app main" --hide .cookie-banner -o screenshots
+./kestrel shot http://localhost:8000/ --viewport 390x844 --full-page --wait-for main --hide .cookie-banner -o screenshots
 ```
 
 Needs Chrome or Chromium (or `CHROME=/path/to/chrome`). All options are in the [kestrel-cli README](https://github.com/Pixel-Process-UG/kestrel-cli#use).
