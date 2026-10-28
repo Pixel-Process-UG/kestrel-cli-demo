@@ -47,7 +47,7 @@ jobs:
         uses: Pixel-Process-UG/kestrel-cli@v0.1.0
         with:
           urls: http://localhost:8000/pricing.html
-          args: --selector ".card.pick" --scale 2 --wait-for main --hide .cookie-banner
+          args: --selector .card.pick --scale 2 --wait-for main --hide .cookie-banner
           out: screenshots/element
 
       - name: Summary

@@ -35,7 +35,7 @@ The page renders its content with JavaScript after a delay, so `--wait-for` hold
 
 ## One element at 2x
 
-`--selector ".card.pick" --scale 2` captures only the first matching element, at Retina resolution.
+`--selector .card.pick --scale 2` captures only the first matching element, at Retina resolution.
 
 <img src="screenshots/element/localhost-8000-pricing.html.png" width="400" alt="Plus pricing card">
 
