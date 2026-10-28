@@ -1,0 +1,88 @@
+name: Screenshots
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  capture:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+
+      # Any dev server works; this one serves the static demo site.
+      - name: Serve the site
+        run: |
+          python -m http.server 8000 -d site > /dev/null 2>&1 &
+          for i in $(seq 30); do curl -sf http://localhost:8000/ > /dev/null && exit 0; sleep 1; done
+          exit 1
+
+      - name: Phone and desktop, full page
+        id: light
+        uses: Pixel-Process-UG/kestrel-cli@v0.1.0
+        with:
+          urls: http://localhost:8000/ http://localhost:8000/pricing.html
+          args: --viewport 390x844 --viewport 1440x900 --full-page --wait-for "#app main" --hide .cookie-banner
+          out: screenshots/light
+
+      - name: Dark mode
+        id: dark
+        uses: Pixel-Process-UG/kestrel-cli@v0.1.0
+        with:
+          urls: http://localhost:8000/
+          args: --dark --wait-for "#app main" --hide .cookie-banner
+          out: screenshots/dark
+
+      - name: One element at 2x
+        id: element
+        uses: Pixel-Process-UG/kestrel-cli@v0.1.0
+        with:
+          urls: http://localhost:8000/pricing.html
+          args: --selector ".card.pick" --scale 2 --wait-for "#app main" --hide .cookie-banner
+          out: screenshots/element
+
+      - name: Summary
+        env:
+          JSON: ${{ steps.light.outputs.json }}${{ steps.dark.outputs.json }}${{ steps.element.outputs.json }}
+        run: |
+          {
+            echo "### kestrel shot on ${{ runner.os }}"
+            echo
+            echo "| URL | Viewport | File |"
+            echo "|---|---|---|"
+            echo "$JSON" | jq -rs 'add[] | "| \(.url) | \(.viewport) | `\(.path // .error)` |"'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-${{ runner.os }}
+          path: screenshots
+
+  # Keeps the images in the README current: commits the Linux run's screenshots.
+  publish:
+    if: github.event_name != 'pull_request'
+    needs: capture
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: screenshots-Linux
+          path: screenshots
+      - name: Commit screenshots
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add screenshots
+          git diff --cached --quiet || { git commit -m "chore: update screenshots"; git push; }
