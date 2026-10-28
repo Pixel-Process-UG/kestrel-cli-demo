@@ -74,8 +74,13 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    # One publisher at a time, so pushes never race each other.
+    concurrency: publish-${{ github.ref }}
     steps:
+      # Branch tip, not the run's commit: a re-run or a newer run may have pushed since.
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
       - uses: actions/download-artifact@v4
         with:
           name: screenshots-Linux
